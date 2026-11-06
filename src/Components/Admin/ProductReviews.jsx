@@ -17,7 +17,7 @@ const normalizeReview = (review) => {
         productName: review.productName || product?.name || 'Unknown product',
         reviewer: review.reviewer || review.name || user?.name || user?.email || 'Customer',
         comment: review.filteredComment ?? review.comment ?? '',
-        originalComment: review.originalComment ?? review.rawComment ?? review.uncensoredComment ?? ''
+        originalComment: review.originalComment ?? review.rawComment ?? review.unfilteredComment ?? review.uncensoredComment ?? ''
     }
 }
 
@@ -87,17 +87,21 @@ const ProductReviews = () => {
         { field: 'rating', headerName: 'Rating', width: 90, valueFormatter: value => `${value}/5` },
         {
             field: 'comment',
-            headerName: 'Filtered (storefront)',
+            headerName: 'Filtered',
             minWidth: 220,
             flex: 1,
             renderCell: ({ value }) => <div style={{ whiteSpace: 'normal', overflowWrap: 'anywhere', padding: '8px 0' }}>{value}</div>
         },
         {
             field: 'originalComment',
-            headerName: 'Original (admin only)',
+            headerName: 'Original',
             minWidth: 220,
             flex: 1,
-            renderCell: ({ value }) => <div style={{ whiteSpace: 'normal', overflowWrap: 'anywhere', padding: '8px 0' }}>{value}</div>
+            renderCell: ({ value }) => (
+                <div style={{ whiteSpace: 'normal', overflowWrap: 'anywhere', padding: '8px 0' }}>
+                    {value || 'Unavailable for older reviews'}
+                </div>
+            )
         },
         {
             field: 'actions',
@@ -127,7 +131,7 @@ const ProductReviews = () => {
                         <div>
                             <span className="admin-orders-eyebrow">REVIEW MODERATION</span>
                             <h1>Customer Reviews</h1>
-                            <p>Admins can compare the original review with its filtered storefront version.</p>
+                            <p>Reviews use the same word filter shown to customers on the storefront.</p>
                         </div>
                     </div>
                     {loading ? <Loader /> : (
