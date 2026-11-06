@@ -43,6 +43,7 @@ const Payment = () => {
         if (created) {
             sessionStorage.removeItem('orderInfo')
             dispatch(clearCart())
+            if (created.emailError) toast.warning(created.emailError, { position: 'bottom-right', autoClose: 10000 })
             navigate('/success', { state: { order: created.order } })
         } else {
             setPlacing(false)
